@@ -1,4 +1,5 @@
 server/database/
 dist/
 build/
+server/tests/
 
