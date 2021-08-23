@@ -65,17 +65,19 @@ export class RepaymentService {
     const { Amount } = req.body;
     let summaryOutput = {};
     let AmountForPayment = Number(Amount);
+    let counter = 0;
 
     data.forEach(item => {
       item.dataValues.TotalCredit = Number(item.dataValues.TotalCredit);
       item.dataValues.TotalRepaid = Number(item.dataValues.TotalRepaid);
-     
+      counter++;
+      
       if (Number(item.dataValues.TotalCredit) >= Number(item.dataValues.TotalRepaid)) {
         item.dataValues.debt = Number(item.dataValues.TotalCredit) - Number(item.dataValues.TotalRepaid);
        
         if (AmountForPayment > 0 && item.dataValues.debt < AmountForPayment && item.dataValues.TotalRepaid <= item.dataValues.TotalCredit) {
           
-          if(item.dataValues.id === data.length && item.dataValues.debt > 0 && AmountForPayment > 0) {
+          if(counter === data.length && item.dataValues.debt > 0 && AmountForPayment > 0) {
             item.dataValues.TotalRepaid += AmountForPayment;
             AmountForPayment = 0;
             item.dataValues.overPaid = item.dataValues.TotalRepaid - item.dataValues.TotalCredit;

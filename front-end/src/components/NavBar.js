@@ -28,7 +28,6 @@ const NavigationBar = (props) => {
   const handleOnFocus = () => { }
 
   useEffect(() => {
-  
   }, [dispatch])
 
   return (
@@ -65,11 +64,11 @@ const NavigationBar = (props) => {
                           onSelect={handleOnSelect}
                           onFocus={handleOnFocus}
                           showIcon={false}
-                          placeholder="Type to CustomerID to see more details"
+                          placeholder="Type CustomerID to see more details"
                           autoFocus
                           className="pl-4 searchInputField"
                           fuseOptions={{ keys: ["CustomerID"] }}
-                          resultStringKeyName="brandName"
+                          resultStringKeyName=""
                         />
                       </div>
 
