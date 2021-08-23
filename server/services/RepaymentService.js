@@ -46,8 +46,8 @@ export class RepaymentService {
     const customerDetails = await MyQueries.findOne(Customers, customerObj);
 
     summaryDetails.forEach(item => {
-      if(customerDetails.dataValues.CustomerID === item.dataValues.CustomerID) {
-        item.dataValues.CustomerName = customerDetails.dataValues.CustomerName;  
+      if (customerDetails.dataValues.CustomerID === item.dataValues.CustomerID) {
+        item.dataValues.CustomerName = customerDetails.dataValues.CustomerName;
       }
     })
 
@@ -71,32 +71,30 @@ export class RepaymentService {
       item.dataValues.TotalCredit = Number(item.dataValues.TotalCredit);
       item.dataValues.TotalRepaid = Number(item.dataValues.TotalRepaid);
       counter++;
-      
-      if (Number(item.dataValues.TotalCredit) >= Number(item.dataValues.TotalRepaid)) {
-        item.dataValues.debt = Number(item.dataValues.TotalCredit) - Number(item.dataValues.TotalRepaid);
-       
-        if (AmountForPayment > 0 && item.dataValues.debt < AmountForPayment && item.dataValues.TotalRepaid <= item.dataValues.TotalCredit) {
-          
-          if(counter === data.length && item.dataValues.debt > 0 && AmountForPayment > 0) {
-            item.dataValues.TotalRepaid += AmountForPayment;
-            AmountForPayment = 0;
-            item.dataValues.overPaid = item.dataValues.TotalRepaid - item.dataValues.TotalCredit;
-            this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
-          
-          } else if(AmountForPayment > item.dataValues.debt) {
-            item.dataValues.TotalRepaid += item.dataValues.debt;
-            AmountForPayment -= item.dataValues.debt;
-            item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
-            this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
-          }
+      item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
 
-        } else {
+      if (AmountForPayment > 0 && item.dataValues.debt < AmountForPayment && item.dataValues.TotalRepaid <= item.dataValues.TotalCredit) {
+
+        if (counter === data.length && item.dataValues.debt > 0 && AmountForPayment > 0) {
           item.dataValues.TotalRepaid += AmountForPayment;
           AmountForPayment = 0;
-          item.dataValues.debt = Number(item.dataValues.TotalCredit) - Number(item.dataValues.TotalRepaid);
+          item.dataValues.overPaid = item.dataValues.TotalRepaid - item.dataValues.TotalCredit;
+          this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
+
+        } else if (AmountForPayment >= item.dataValues.debt) {
+          item.dataValues.TotalRepaid += item.dataValues.debt;
+          AmountForPayment -= item.dataValues.debt;
+          item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
           this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
         }
+
+      } else {
+        item.dataValues.TotalRepaid += AmountForPayment;
+        AmountForPayment = 0;
+        item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
+        this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
       }
+
       summaryOutput[item.dataValues.id] = item.dataValues;
     });
 
@@ -118,12 +116,16 @@ export class RepaymentService {
     data.map(item => {
       item.dataValues.TotalCredit = Number(item.dataValues.TotalCredit);
       item.dataValues.TotalRepaid = Number(item.dataValues.TotalRepaid);
+      item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
 
       if (Number(item.dataValues.SeasonID) == Number(SeasonID)) {
         item.dataValues.TotalRepaid += Number(Amount);
-        this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
         item.dataValues.overPaid = item.dataValues.TotalCredit < item.dataValues.TotalRepaid ? item.dataValues.TotalRepaid - item.dataValues.TotalCredit : null;
+        item.dataValues.debt = item.dataValues.TotalCredit > item.dataValues.TotalRepaid ? item.dataValues.TotalCredit - item.dataValues.TotalRepaid : null;
+
         updatedSummary[item.dataValues.id] = item.dataValues;
+        this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
+
       }
     })
 
@@ -147,16 +149,14 @@ export class RepaymentService {
     data.map(item => {
       item.dataValues.TotalCredit = Number(item.dataValues.TotalCredit);
       item.dataValues.TotalRepaid = Number(item.dataValues.TotalRepaid);
+      counter++;
 
-      if (Number(item.dataValues.TotalCredit) <= Number(item.dataValues.TotalRepaid)) {
-        counter++;
-        if (counter == data.length) {
-          item.dataValues.TotalRepaid += Number(Amount);
-          result = true;
-          item.dataValues.overPaid = item.dataValues.TotalRepaid - item.dataValues.TotalCredit;
-          updatedData[item.dataValues.id] = item.dataValues;
-          this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
-        }
+      if (counter == data.length && item.dataValues.TotalCredit <= item.dataValues.TotalRepaid) {
+        item.dataValues.TotalRepaid += Number(Amount);
+        result = true;
+        item.dataValues.overPaid = item.dataValues.TotalRepaid - item.dataValues.TotalCredit;
+        updatedData[item.dataValues.id] = item.dataValues;
+        this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
       }
     });
 
@@ -196,8 +196,8 @@ export class RepaymentService {
         item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
       }
       customerDetails.forEach(i => {
-        if(i.dataValues.CustomerID === item.dataValues.CustomerID) {
-          item.dataValues.CustomerName = i.dataValues.CustomerName;  
+        if (i.dataValues.CustomerID === item.dataValues.CustomerID) {
+          item.dataValues.CustomerName = i.dataValues.CustomerName;
         }
       })
     });
@@ -233,6 +233,17 @@ export class RepaymentService {
     const { CustomerID, SeasonID, id } = data;
     const dataObj = { CustomerID, SeasonID, Amount, Date: new Date(), ParentID: id };
     return MyQueries.create(Repayments, dataObj);
+  }
+
+  /**
+   * Save customer summary
+   * @static
+   * @description 
+   * @returns {Object} response
+   */
+  static saveCustomerSummary(CustomerID, SeasonID, TotalRepaid, TotalCredit) {
+    const dataObj = { CustomerID, SeasonID, TotalRepaid, TotalCredit };
+    return MyQueries.create(CustomerSummaries, dataObj);
   }
 
   /**
