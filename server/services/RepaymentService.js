@@ -77,11 +77,21 @@ export class RepaymentService {
 
         if (counter === data.length && item.dataValues.debt > 0 && AmountForPayment > 0) {
           item.dataValues.TotalRepaid += AmountForPayment;
+
+          this.saveRepayments(item.dataValues, Amount);
           AmountForPayment = 0;
           item.dataValues.overPaid = item.dataValues.TotalRepaid - item.dataValues.TotalCredit;
           this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
 
         } else if (AmountForPayment >= item.dataValues.debt) {
+
+          if (item.dataValues.debt < AmountForPayment) {
+            this.saveRepayments(item.dataValues, Amount)
+            this.saveRepayments(item.dataValues, item.dataValues.debt - AmountForPayment)
+          } else {
+            this.saveRepayments(item.dataValues, Amount);
+          }
+      
           item.dataValues.TotalRepaid += item.dataValues.debt;
           AmountForPayment -= item.dataValues.debt;
           item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
@@ -90,6 +100,7 @@ export class RepaymentService {
 
       } else {
         item.dataValues.TotalRepaid += AmountForPayment;
+        this.saveRepayments(item.dataValues, AmountForPayment);
         AmountForPayment = 0;
         item.dataValues.debt = item.dataValues.TotalCredit - item.dataValues.TotalRepaid;
         this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
@@ -125,7 +136,7 @@ export class RepaymentService {
 
         updatedSummary[item.dataValues.id] = item.dataValues;
         this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
-
+        this.saveRepayments(item.dataValues, Amount);
       }
     })
 
@@ -157,6 +168,7 @@ export class RepaymentService {
         item.dataValues.overPaid = item.dataValues.TotalRepaid - item.dataValues.TotalCredit;
         updatedData[item.dataValues.id] = item.dataValues;
         this.updateCustomerSummary(item.dataValues.id, item.dataValues.TotalCredit, item.dataValues.TotalRepaid);
+        this.saveRepayments(item.dataValues, Amount);
       }
     });
 
@@ -228,22 +240,10 @@ export class RepaymentService {
    * @description 
    * @returns {Object} response
    */
-  static saveRepayments(req, data) {
-    const { Amount } = req.body;
+  static saveRepayments(data, Amount) {
     const { CustomerID, SeasonID, id } = data;
     const dataObj = { CustomerID, SeasonID, Amount, Date: new Date(), ParentID: id };
-    return MyQueries.create(Repayments, dataObj);
-  }
-
-  /**
-   * Save customer summary
-   * @static
-   * @description 
-   * @returns {Object} response
-   */
-  static saveCustomerSummary(CustomerID, SeasonID, TotalRepaid, TotalCredit) {
-    const dataObj = { CustomerID, SeasonID, TotalRepaid, TotalCredit };
-    return MyQueries.create(CustomerSummaries, dataObj);
+    return Amount ? MyQueries.create(Repayments, dataObj) : null;
   }
 
   /**

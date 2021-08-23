@@ -33,7 +33,6 @@ class RepaymentController {
         }
       }
 
-      result.forEach(item => RepaymentService.saveRepayments(req, item));
       return Response.successMessage(req, res, 'Customer Summaries have been updated successfully!', result, 200);
 
     } catch (error) {
