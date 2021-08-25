@@ -4,15 +4,19 @@ import {
 } from 'react-bootstrap';
 import logo from '../assets/pay_logo.png';
 import { withRouter, Redirect } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
+import { getCustomerSummariesAction } from '../redux/actions/repaymentUploadAction';
 
 const NavigationBar = (props) => {
 
   const [searchQuery, setSearchQuery] = useState({})
   const [isSelected, setIsSelected] = useState(false);
+
+  const getCustomerSummaries = useSelector(state => state.getCustomerSummaries);
+  const { data } = getCustomerSummaries;
 
   const dispatch = useDispatch();
 
@@ -21,18 +25,19 @@ const NavigationBar = (props) => {
   const handleOnHover = (result) => { }
 
   const handleOnSelect = (item) => {
-    setSearchQuery(item.id)
+    setSearchQuery(item.CustomerID)
     setIsSelected(true);
   }
 
   const handleOnFocus = () => { }
 
   useEffect(() => {
+    dispatch(getCustomerSummariesAction());
   }, [dispatch])
 
   return (
     <>
-        {isSelected && <Redirect to={`/${searchQuery}`} />}
+        {isSelected && <Redirect to={`/repayment/${searchQuery}`} />}
 
           <Navbar collapseOnSelect expand="lg" variant="light" className="main-nav bg-white" >
             <Container className="nav-container d-flex align-items-center">
@@ -58,7 +63,7 @@ const NavigationBar = (props) => {
 
                       <div className="search-container">
                         <ReactSearchAutocomplete
-                          items={[]}
+                          items={data && data.data}
                           onSearch={handleOnSearch}
                           onHover={handleOnHover}
                           onSelect={handleOnSelect}
@@ -68,7 +73,7 @@ const NavigationBar = (props) => {
                           autoFocus
                           className="pl-4 searchInputField"
                           fuseOptions={{ keys: ["CustomerID"] }}
-                          resultStringKeyName=""
+                          resultStringKeyName="CustomerID"
                         />
                       </div>
 

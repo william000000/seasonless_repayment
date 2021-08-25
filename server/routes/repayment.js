@@ -7,7 +7,8 @@ import { isCustomerSummaryExist, isSeasonExist } from "../middleware/isRecordExi
 const router = Router();
 
 router.post('/', validateRepaymentInputs(), catchInputError, isCustomerSummaryExist, isSeasonExist, RepaymentController.rePaymentUploads);
-router.get('/', RepaymentController.getRepayments);
 router.get('/summaries', RepaymentController.getAllCustomerSummaries);
+router.get('/', RepaymentController.getRepayments);
+router.get('/:CustomerID', RepaymentController.getRepaymentByCustomerID);
 
 export default router;
