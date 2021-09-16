@@ -5,6 +5,7 @@ import { RepaymentUploadView } from './views/RepaymentUploadView';
 import { NavWithRouter } from './components/NavBar';
 import { ToastContainer } from 'react-toastify';
 import { CustomerSummaryView } from './views/CustomerSummariesView';
+import { RepaymentDetailsView } from './views/RepaymentDetailsView';
 
 
 function App() {
@@ -14,9 +15,10 @@ function App() {
         <NavWithRouter />
         <Switch>
           
+          <Route path='/repayment/:CustomerID' exact component={RepaymentDetailsView} />
           <Route path='/payment' exact component={RepaymentUploadView} />
           <Route path='/:id?' component={CustomerSummaryView} />
-          
+      
         </Switch>
 
         <ToastContainer position="bottom-center"

@@ -185,7 +185,7 @@ export class RepaymentService {
   static async getAllCustomerSummaries() {
     const searchObj = {
       attributes: [
-        'id', 'CustomerID', 'SeasonID', 'TotalRepaid', 'TotalCredit'
+        'id', 'CustomerID', 'SeasonID', 'TotalRepaid', 'TotalCredit', 'updatedAt'
       ],
       order: [
         ['id', 'ASC'],
@@ -227,6 +227,22 @@ export class RepaymentService {
    */
   static getAllRepayments() {
     const searchObj = {
+      attributes: [
+        'RepaymentID', 'CustomerID', 'SeasonID', 'Date', 'Amount', 'ParentID'
+      ]
+    };
+    return MyQueries.findAll(Repayments, searchObj);
+  }
+
+  /**
+   * Get all repayments details
+   * @static
+   * @description 
+   * @returns {Object} response
+   */
+  static getRepaymentByCustomerID(CustomerID) {
+    const searchObj = {
+      where: { CustomerID },
       attributes: [
         'RepaymentID', 'CustomerID', 'SeasonID', 'Date', 'Amount', 'ParentID'
       ]

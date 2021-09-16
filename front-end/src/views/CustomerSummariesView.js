@@ -35,20 +35,23 @@ export const CustomerSummaryView = (props) => {
       <Container className="d-flex flex-wrap justify-content-center mb-4">
         {!updatedSummaryData && data && data.data.map((item, index) =>
           <Row key={index} className="p-2">
-            <h5>CustomerSummary ({item.overPaid && item.overPaid !== 0 ? `Client is overpaid by ${item.overPaid}` : !item.debt ? `Client is fully repaid for this season` : `Client is owes ${item.debt} for this season`})</h5>
-            <ul className="w-100 list-unstyled">
-              <li className="">CustomerName = {item.CustomerName}</li>
-              <li className="">CustomerID = {item.CustomerID}</li>
-              <li className="">Season = {item.SeasonID}</li>
-              <li className="">TotalRepaid = {item.TotalRepaid}</li>
-              <li className="">TotalCredit = {item.TotalCredit}</li>
+       
+              <h5>CustomerSummary ({item.overPaid && item.overPaid !== 0 ? `${item.CustomerName} is overpaid by ${item.overPaid}` : !item.debt ? `${item.CustomerName}  is fully repaid for this season of ${item.SeasonID}` : `${item.CustomerName} is owes ${item.debt} for this season of ${item.SeasonID}`})</h5>
+              <ul className="w-100 list-unstyled">
+                <li className="">CustomerName = {item.CustomerName}</li>
+                <li className="">CustomerID = {item.CustomerID}</li>
+                <li className="">Season = {item.SeasonID}</li>
+                <li className="">TotalRepaid = {item.TotalRepaid}</li>
+                <li className="">TotalCredit = {item.TotalCredit}</li>
+                <li className="">Date = {new Date(item.updatedAt).toDateString() + ' ' + new Date(item.updatedAt).toLocaleTimeString()}</li>
 
-            </ul>
+              </ul>
+            
           </Row>
         )}
 
         {updatedData && updatedData.data.map(item => <Row className="p-2">
-          <h5>CustomerSummary ({item.overPaid && item.overPaid !== 0 ? `Client is overpaid by ${item.overPaid}` : !item.debt ? `Client is fully repaid for this season` : `Client is owes ${item.debt} for this season`})</h5>
+          <h5>CustomerSummary ({item.overPaid && item.overPaid !== 0 ? `${item.CustomerName} is overpaid by ${item.overPaid}` : !item.debt ? `${item.CustomerName} is fully repaid for this season` : `${item.CustomerName} is owes ${item.debt} for this season of ${item.SeasonID}`})</h5>
           <ul className="w-100 list-unstyled">
             <li className="">CustomerName = {item.CustomerName}</li>
             <li className="">CustomerID = {item.CustomerID}</li>

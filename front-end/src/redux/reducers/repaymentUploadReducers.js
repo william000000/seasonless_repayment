@@ -5,6 +5,9 @@ import {
     CUSTOMER_SUMMARIES_REQUEST,
     CUSTOMER_SUMMARIES_SUCCESS,
     CUSTOMER_SUMMARIES_ERROR,
+    REPAYMENT_DETAILS_ERROR,
+    REPAYMENT_DETAILS_REQUEST,
+    REPAYMENT_DETAILS_SUCCESS,
   } from '../actionTypes/repaymentUploadActionTypes';
   
   const repaymentUploadReducers = (state = {}, action) => {
@@ -49,7 +52,29 @@ import {
       default:
         return state;
     }
+  }; 
+
+  const getRepaymentDetailsReducers = (state = {}, action) => {
+    switch (action.type) {
+      case REPAYMENT_DETAILS_REQUEST:
+        return { loading: true };
+      case REPAYMENT_DETAILS_SUCCESS:
+        return {
+            ...state,
+            loading: false,
+            data: action.payload,
+        };
+      case REPAYMENT_DETAILS_ERROR:
+        return {
+          ...state,
+          loading: false,
+          error: action.payload,
+        };
+
+      default:
+        return state;
+    }
   };  
   
-  export {  repaymentUploadReducers, getCustomerSummariesReducers } ;
+  export {  repaymentUploadReducers, getCustomerSummariesReducers, getRepaymentDetailsReducers } ;
   

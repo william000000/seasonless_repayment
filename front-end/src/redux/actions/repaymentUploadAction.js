@@ -6,6 +6,9 @@ import {
     CUSTOMER_SUMMARIES_ERROR,
     CUSTOMER_SUMMARIES_REQUEST,
     CUSTOMER_SUMMARIES_SUCCESS,
+    REPAYMENT_DETAILS_ERROR,
+    REPAYMENT_DETAILS_REQUEST,
+    REPAYMENT_DETAILS_SUCCESS,
 } from "../actionTypes/repaymentUploadActionTypes";
 import { notificationError, notificationSuccess } from "../../helpers/toastNotificationPopUp";
 import { spinnerStatusAction } from "./spinnerAction";
@@ -47,4 +50,21 @@ const getCustomerSummariesAction = () => async (dispatch) => {
     }
 }
 
-export { repaymentUploadAction, getCustomerSummariesAction };
+const getCustomerRepaymentAction = (CustomerID) => async (dispatch) => {
+    try {
+        console.log("CustomerID acrion--",CustomerID)
+        spinnerStatusAction(true);
+        dispatch({ type: REPAYMENT_DETAILS_REQUEST });
+        const { data } = await axios.get(`${BaseUrl}/api/repayments/${CustomerID}`);
+        dispatch({ type: REPAYMENT_DETAILS_SUCCESS, payload: data });
+        spinnerStatusAction(false);
+
+    } catch (error) {
+        dispatch({ type: REPAYMENT_DETAILS_ERROR, payload: errorMessageHandler(error) })
+        spinnerStatusAction(true);
+        notificationError(errorMessageHandler(error));
+        spinnerStatusAction(false);
+    }
+}
+
+export { repaymentUploadAction, getCustomerSummariesAction, getCustomerRepaymentAction };
