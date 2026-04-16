@@ -2,18 +2,8 @@
 
 #### Current project status
 
-    the project is still in progress because I need to optimize its performance, refactoring the code and writing the unit tests 
-
-### Estimation of the outstanding work
-
-    regarding the size of the work remaining, It would take me one more day to get it to a desired level
-
-#### Successes
-    I was able to finish the minimum required functionalities in time
-#### Bumps
-    Time was an issue
-
-    so I would spend more time in understanding the problem description as it is the only solution to get this done in a very short time.
+    Completed the minimum required functionalities.
+    However, I may consider optimizing its performance, refactoring the codebase, and adjusting the tests 
 
 ### How to run my solution
 
